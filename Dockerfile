@@ -26,7 +26,7 @@ ENV FONTFORGE_SOURCE "https://github.com/fontforge/fontforge.git"
 ENV PDF2HTMLEX_SOURCE "https://github.com/Rockstar04/pdf2htmlEX.git"
 ENV HOME_PATH "/"
 
-RUN apk --update add \
+RUN apk --update --no-cache add \
 		alpine-sdk \
 		xz \
 		pango-dev \
@@ -41,9 +41,7 @@ RUN apk --update add \
 		freetype-dev \
 		glib-dev \
 		cmake \
-		libxml2-dev
-
-RUN apk --update add \
+		libxml2-dev \
 		libpng \
 		libjpeg-turbo-dev \
 		python \
@@ -96,24 +94,17 @@ RUN cd "$HOME_PATH" \
 		&& cmake . \
 		&& make \
 		&& make install
-		# && ldconfig
 
 # Cleaning up
-RUN echo "Removing sources ..." \
-	  && cd "$HOME_PATH" && rm -rf "$POPPLER_NAME.tar.xz" \
+RUN echo "Removing sources ..."
+RUN cd "$HOME_PATH" && rm -rf "$POPPLER_NAME.tar.xz" \
 	  && cd "$HOME_PATH" && rm -rf "$POPPLER_NAME/" \
 	  && cd "$HOME_PATH" && rm -rf "libuninameslist" \
 	  && cd "$HOME_PATH" && rm -rf "fontforge" \
 	  && cd "$HOME_PATH" && rm -rf "pdf2htmlEX"
 
-RUN echo "Cleaning caches ..." \
-		&& rm -rf /var/lib/apt/lists/* \
-    && rm /var/cache/apk/*
-
 # Debug
-RUN which pdf2htmlEX
 RUN pdf2htmlEX -v
-RUN which pdftotext
 RUN pdftotext -v
 
 CMD ["/usr/local/bin/pdf2htmlEX"]
